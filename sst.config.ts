@@ -10,7 +10,9 @@ export default {
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
-      const site = new NextjsSite(stack, "nextjs-generative-ui-site");
+      const site = new NextjsSite(stack, "nextjs-generative-ui-site", {
+        runtime: "nodejs20.x",
+      });
 
       stack.addOutputs({
         SiteUrl: site.url,
