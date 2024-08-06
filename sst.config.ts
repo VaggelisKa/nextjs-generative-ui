@@ -12,6 +12,8 @@ export default {
     app.stack(function Site({ stack }) {
       const site = new NextjsSite(stack, "nextjs-generative-ui-site", {
         runtime: "nodejs20.x",
+        timeout: "30 seconds",
+        memorySize: "2048 MB",
       });
 
       app.setDefaultRemovalPolicy("destroy");
