@@ -5,7 +5,7 @@ export default {
   config(_input) {
     return {
       name: "nextjs-generative-ui",
-      region: "eu-north-1",
+      region: "eu-central-1",
     };
   },
   stacks(app) {
@@ -13,6 +13,8 @@ export default {
       const site = new NextjsSite(stack, "nextjs-generative-ui-site", {
         runtime: "nodejs20.x",
       });
+
+      app.setDefaultRemovalPolicy("destroy");
 
       stack.addOutputs({
         SiteUrl: site.url,
