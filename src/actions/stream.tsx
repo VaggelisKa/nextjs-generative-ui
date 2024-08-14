@@ -3,6 +3,8 @@
 import { streamUI } from "ai/rsc";
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
 import { z } from "zod";
+import { WeatherComponent } from "~/components/WeatherComponent";
+import { GenericLoader } from "~/components/GenericLoader";
 
 const bedrock = createAmazonBedrock({
   region: "eu-central-1",
@@ -10,33 +12,49 @@ const bedrock = createAmazonBedrock({
   secretAccessKey: "Mf/6lBN9eIoqwSF05vIie2zcDp1701pNsOpE11G3",
 });
 
-const LoadingComponent = () => (
-  <div className="animate-pulse p-4">getting weather...</div>
-);
-
 const getWeather = async (location: string) => {
   await new Promise((resolve) => setTimeout(resolve, 4000));
   return "82°F️ ☀️";
 };
 
-interface WeatherProps {
-  location: string;
-  weather: string;
-  timeOfDay: string;
+async function getStockPrice(
+  company: string,
+  companySymbol: string,
+  date?: string
+) {
+  let options = {
+    method: "POST",
+    headers: {
+      "x-rapidapi-key": process.env.RAPIDAPI_KEY ?? "",
+      "x-rapidapi-host": "yahoo-finance160.p.rapidapi.com",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      stock: companySymbol,
+      period: "1mo",
+    }),
+  };
+
+  console.log(companySymbol);
+
+  let response = await fetch(
+    "https://yahoo-finance160.p.rapidapi.com/history",
+    options
+  );
+  let data = (await response.json()) as {
+    metadata: { symbol: string };
+    records: { date: string; Close: string }[];
+  };
+
+  return `The stock price for ${data.metadata.symbol} is ${Number(
+    data.records[0].Close
+  ).toLocaleString("en-US", { currency: "USD" })} for date ${date}`;
 }
 
-const WeatherComponent = (props: WeatherProps) => (
-  <div className="border border-neutral-200 p-4 rounded-lg max-w-fit">
-    The weather in {props.location} is {props.weather} at {props.timeOfDay}
-  </div>
-);
-
-export async function streamComponent() {
+export async function streamComponent({ prompt }: { prompt: string }) {
   const result = await streamUI({
+    prompt,
     model: bedrock("anthropic.claude-3-sonnet-20240229-v1:0"),
-    prompt:
-      "Get the weather for San Francisco during dark hours after midnight",
-    text: ({ content }) => <div>{content}</div>,
     tools: {
       getWeather: {
         description: "Get the weather for a location and a time of day",
@@ -45,7 +63,7 @@ export async function streamComponent() {
           timeOfDay: z.string(),
         }),
         generate: async function* ({ location, timeOfDay }) {
-          yield <LoadingComponent />;
+          yield <GenericLoader />;
           const weather = await getWeather(location);
           return (
             <WeatherComponent
@@ -54,6 +72,27 @@ export async function streamComponent() {
               timeOfDay={timeOfDay}
             />
           );
+        },
+      },
+      getStockPrice: {
+        description: `Get the stock price for a company `,
+        parameters: z.object({
+          companyName: z.string().describe("The name of the company"),
+          companySymbol: z
+            .string()
+            .describe(
+              "The symbol of the company if it doesnt exist use the name and find the symbol"
+            ),
+          date: z
+            .string()
+            .optional()
+            .describe(
+              "The date asked by the user, The date should always be relative to the current date which is 14.08.2024 it should be formatted to 'dd.MM.yyyy'"
+            ),
+        }),
+        generate: async function* ({ companyName, date, companySymbol }) {
+          yield <GenericLoader />;
+          return <div>{getStockPrice(companyName, companySymbol, date)}</div>;
         },
       },
     },
