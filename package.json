@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^0.0.9",
+    "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "ai": "^3.3.0",
     "class-variance-authority": "^0.7.0",
