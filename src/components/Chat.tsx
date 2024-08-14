@@ -1,7 +1,11 @@
+"use client";
+
 import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import React from "react";
+import { useAIState, useActions, useUIState } from "ai/rsc";
+import { AI, ClientMessage, UIState } from "~/actions/ai";
 
 export function MessageBox({
   children,
@@ -36,6 +40,27 @@ export function MessageBox({
 }
 
 export function ChatContainer() {
+  const { sendMessage } = useActions<typeof AI>();
+  const [messages, setMessages] = useUIState();
+
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+
+    setMessages([
+      ...messages,
+      { id: Date.now(), role: "user", display: event.target.message.value },
+    ]);
+
+    const response = await sendMessage(event.target.message.value);
+
+    console.log(response);
+
+    setMessages([
+      ...messages,
+      { id: Date.now(), role: "bot", display: response },
+    ]);
+  };
+
   return (
     <div className="flex flex-col h-[600px] w-[500px] bg-background rounded-2xl shadow-lg">
       <header className="flex items-center gap-4 px-6 py-4 border-b">
@@ -50,28 +75,19 @@ export function ChatContainer() {
       </header>
 
       <div className="flex-1 overflow-auto p-6 space-y-4">
-        <MessageBox from="bot">
-          <p>
-            Absolutely, I'd be happy to provide more details. Our product offers
-            the following key features:
-          </p>
-          <ul className="list-disc pl-4 mt-2">
-            <li>Automated workflows</li>
-            <li>Real-time analytics</li>
-            <li>Scalable infrastructure</li>
-            <li>Customizable integrations</li>
-          </ul>
-        </MessageBox>
-
-        <MessageBox from="user">
-          <p>
-            That sounds great! Can you tell me more about the pricing options?
-          </p>
-        </MessageBox>
+        {messages?.length ? (
+          messages.map((message: any) => (
+            <MessageBox key={message.id} from={message.role}>
+              {message.display}
+            </MessageBox>
+          ))
+        ) : (
+          <div className="text-center">No messages yet</div>
+        )}
       </div>
 
       <div className="border-t p-4">
-        <div className="relative">
+        <form className="relative" onSubmit={handleSubmit}>
           <Textarea
             placeholder="Type your message..."
             name="message"
@@ -87,7 +103,7 @@ export function ChatContainer() {
             <ArrowUpIcon className="w-4 h-4" />
             <span className="sr-only">Send</span>
           </Button>
-        </div>
+        </form>
       </div>
     </div>
   );
