@@ -1,26 +1,26 @@
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
-import { generateId, generateText } from "ai";
-import { createAI, getMutableAIState } from "ai/rsc";
+import { generateId, generateText, streamText } from "ai";
+import { createAI, createStreamableValue, getMutableAIState } from "ai/rsc";
 import { ReactNode } from "react";
 
 // Define the AI state and UI state types
 export type ServerMessage = {
-  role: "user" | "bot";
+  role: "user" | "assistant";
   content: string;
 };
 
 export type ClientMessage = {
   id: string;
-  role: "user" | "bot";
+  role: "user" | "assistant";
   display: ReactNode;
 };
 
 export async function sendMessage(message: string) {
   "use server";
 
-  const history = getMutableAIState();
+  // const history = getMutableAIState();
 
-  history.update([...history.get(), { role: "user", content: message }]);
+  // history.update([...history.get(), { role: "user", content: message }]);
 
   let bedrock = createAmazonBedrock({
     region: "eu-central-1",
@@ -28,17 +28,22 @@ export async function sendMessage(message: string) {
     secretAccessKey: "Mf/6lBN9eIoqwSF05vIie2zcDp1701pNsOpE11G3",
   });
 
-  const response = await generateText({
-    model: bedrock("anthropic.claude-3-sonnet-20240229-v1:0"),
-    messages: history.get(),
-  });
+  let stream = createStreamableValue("");
 
-  history.done([
-    ...history.get(),
-    { role: "assistant", content: response.text },
-  ]);
+  (async () => {
+    let { textStream } = await streamText({
+      model: bedrock("anthropic.claude-3-sonnet-20240229-v1:0"),
+      prompt: message,
+    });
 
-  return response.text;
+    for await (let delta of textStream) {
+      stream.update(delta);
+    }
+
+    stream.done();
+  })();
+
+  return stream.value;
 }
 
 export type AIState = ServerMessage[];

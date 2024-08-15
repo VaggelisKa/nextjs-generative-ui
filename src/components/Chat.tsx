@@ -3,9 +3,8 @@
 import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
-import React, { useState } from "react";
-import { useAIState, useActions, useUIState } from "ai/rsc";
-import { AI, ClientMessage } from "~/actions/ai";
+import React from "react";
+import { useChat } from "ai/react";
 import { generateId } from "ai";
 
 export function MessageBox({
@@ -22,8 +21,8 @@ export function MessageBox({
           {children}
         </div>
         <Avatar className="w-8 h-8 border">
-          <AvatarImage src="/placeholder-user.jpg" alt="User Avatar" />
-          <AvatarFallback>YO</AvatarFallback>
+          <AvatarImage src="/placeholder-user.jpg" alt="" />
+          <AvatarFallback>CB</AvatarFallback>
         </Avatar>
       </div>
     );
@@ -32,7 +31,7 @@ export function MessageBox({
   return (
     <div className="flex items-start gap-4">
       <Avatar className="w-8 h-8 border">
-        <AvatarImage src="/placeholder-user.jpg" alt="User Avatar" />
+        <AvatarImage src="/placeholder-user.jpg" alt="" />
         <AvatarFallback>YO</AvatarFallback>
       </Avatar>
       <div className="bg-muted rounded-lg p-4 max-w-[70%]">{children}</div>
@@ -41,26 +40,12 @@ export function MessageBox({
 }
 
 export function ChatContainer() {
-  const [input, setInput] = useState("");
-  const { sendMessage } = useActions<typeof AI>();
-  const [messages, setMessages] = useUIState();
+  const { messages, input, setInput, append } = useChat();
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    setMessages((messages: ClientMessage[]) => [
-      ...messages,
-      { id: generateId(), role: "user", display: input },
-    ]);
-
-    const response = await sendMessage(input);
-
-    console.log("test");
-
-    setMessages((messages: ClientMessage[]) => [
-      ...messages,
-      { id: generateId(), role: "assistant", display: response },
-    ]);
+    append({ role: "user", content: input });
   };
 
   return (
@@ -77,15 +62,13 @@ export function ChatContainer() {
       </header>
 
       <div className="flex-1 overflow-auto p-6 space-y-4">
-        {messages?.length ? (
-          messages.map((message: any) => (
-            <MessageBox key={message.id} from={message.role}>
-              {message.display}
-            </MessageBox>
-          ))
-        ) : (
-          <div className="text-center">No messages yet</div>
-        )}
+        <MessageBox from="assistant">Hello, how can I help you?</MessageBox>
+
+        {messages.map((message: any) => (
+          <MessageBox key={message.id} from={message.role}>
+            {message.content}
+          </MessageBox>
+        ))}
       </div>
 
       <div className="border-t p-4">
