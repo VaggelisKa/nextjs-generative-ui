@@ -3,16 +3,17 @@
 import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
-import React from "react";
+import React, { useState } from "react";
 import { useAIState, useActions, useUIState } from "ai/rsc";
-import { AI, ClientMessage, UIState } from "~/actions/ai";
+import { AI, ClientMessage } from "~/actions/ai";
+import { generateId } from "ai";
 
 export function MessageBox({
   children,
   from,
 }: {
   children: React.ReactNode;
-  from: "user" | "bot";
+  from: "user" | "assistant";
 }) {
   if (from === "user") {
     return (
@@ -40,24 +41,25 @@ export function MessageBox({
 }
 
 export function ChatContainer() {
+  const [input, setInput] = useState("");
   const { sendMessage } = useActions<typeof AI>();
   const [messages, setMessages] = useUIState();
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    setMessages([
+    setMessages((messages: ClientMessage[]) => [
       ...messages,
-      { id: Date.now(), role: "user", display: event.target.message.value },
+      { id: generateId(), role: "user", display: input },
     ]);
 
-    const response = await sendMessage(event.target.message.value);
+    const response = await sendMessage(input);
 
-    console.log(response);
+    console.log("test");
 
-    setMessages([
+    setMessages((messages: ClientMessage[]) => [
       ...messages,
-      { id: Date.now(), role: "bot", display: response },
+      { id: generateId(), role: "assistant", display: response },
     ]);
   };
 
@@ -94,6 +96,7 @@ export function ChatContainer() {
             id="message"
             rows={1}
             className="min-h-[48px] rounded-2xl resize-none p-4 border border-neutral-400 shadow-sm pr-16"
+            onChange={(e) => setInput(e.target.value)}
           />
           <Button
             type="submit"

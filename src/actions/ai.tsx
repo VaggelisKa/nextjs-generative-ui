@@ -1,5 +1,5 @@
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
-import { generateText } from "ai";
+import { generateId, generateText } from "ai";
 import { createAI, getMutableAIState } from "ai/rsc";
 import { ReactNode } from "react";
 
@@ -33,9 +33,12 @@ export async function sendMessage(message: string) {
     messages: history.get(),
   });
 
-  history.done([...history.get(), { role: "bot", content: response }]);
+  history.done([
+    ...history.get(),
+    { role: "assistant", content: response.text },
+  ]);
 
-  return response;
+  return response.text;
 }
 
 export type AIState = ServerMessage[];
@@ -44,7 +47,13 @@ export type UIState = ClientMessage[];
 // Create the AI provider with the initial states and allowed actions
 export const AI = createAI({
   initialAIState: [],
-  initialUIState: [],
+  initialUIState: [
+    {
+      id: generateId(),
+      role: "assistant",
+      display: "Hello, how can I help you?",
+    },
+  ],
   actions: {
     sendMessage,
   },

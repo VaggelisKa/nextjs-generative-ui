@@ -12,11 +12,6 @@ const bedrock = createAmazonBedrock({
   secretAccessKey: "Mf/6lBN9eIoqwSF05vIie2zcDp1701pNsOpE11G3",
 });
 
-const getWeather = async (location: string) => {
-  await new Promise((resolve) => setTimeout(resolve, 4000));
-  return "82°F️ ☀️";
-};
-
 async function getStockPrice(
   company: string,
   companySymbol: string,
@@ -56,24 +51,6 @@ export async function streamComponent({ prompt }: { prompt: string }) {
     prompt,
     model: bedrock("anthropic.claude-3-sonnet-20240229-v1:0"),
     tools: {
-      getWeather: {
-        description: "Get the weather for a location and a time of day",
-        parameters: z.object({
-          location: z.string(),
-          timeOfDay: z.string(),
-        }),
-        generate: async function* ({ location, timeOfDay }) {
-          yield <GenericLoader />;
-          const weather = await getWeather(location);
-          return (
-            <WeatherComponent
-              weather={weather}
-              location={location}
-              timeOfDay={timeOfDay}
-            />
-          );
-        },
-      },
       getStockPrice: {
         description: `Get the stock price for a company `,
         parameters: z.object({
