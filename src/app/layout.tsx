@@ -20,7 +20,10 @@ export default function RootLayout({
     <AI>
       <html lang="en">
         <body
-          className={cn(inter.className, "flex justify-center items-center")}
+          className={cn(
+            inter.className,
+            "md:flex md:justify-center md:items-center min-h-screen"
+          )}
         >
           {children}
         </body>

@@ -5,39 +5,6 @@ import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import React from "react";
 import { useChat } from "ai/react";
-import { generateId } from "ai";
-
-export function MessageBox({
-  children,
-  from,
-}: {
-  children: React.ReactNode;
-  from: "user" | "assistant";
-}) {
-  if (from === "user") {
-    return (
-      <div className="flex items-start gap-4 justify-end">
-        <div className="bg-primary rounded-lg p-4 max-w-[70%] text-primary-foreground">
-          {children}
-        </div>
-        <Avatar className="w-8 h-8 border">
-          <AvatarImage src="/placeholder-user.jpg" alt="" />
-          <AvatarFallback>CB</AvatarFallback>
-        </Avatar>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex items-start gap-4">
-      <Avatar className="w-8 h-8 border">
-        <AvatarImage src="/placeholder-user.jpg" alt="" />
-        <AvatarFallback>YO</AvatarFallback>
-      </Avatar>
-      <div className="bg-muted rounded-lg p-4 max-w-[70%]">{children}</div>
-    </div>
-  );
-}
 
 export function ChatContainer() {
   const { messages, input, setInput, append } = useChat();
@@ -49,10 +16,10 @@ export function ChatContainer() {
   };
 
   return (
-    <div className="flex flex-col h-[600px] w-[500px] bg-background rounded-2xl shadow-lg">
+    <div className="flex flex-col min-h-screen md:min-h-[600px] min-w-[250px] md:min-w-[500px] bg-background rounded-2xl shadow-lg">
       <header className="flex items-center gap-4 px-6 py-4 border-b">
         <Avatar className="w-10 h-10 border">
-          <AvatarImage src="/placeholder-user.jpg" alt="Chatbot Avatar" />
+          <AvatarImage src="/chatbot.png" alt="" />
           <AvatarFallback>CB</AvatarFallback>
         </Avatar>
         <div>
@@ -112,5 +79,37 @@ function ArrowUpIcon(props: any) {
       <path d="m5 12 7-7 7 7" />
       <path d="M12 19V5" />
     </svg>
+  );
+}
+
+export function MessageBox({
+  children,
+  from,
+}: {
+  children: React.ReactNode;
+  from: "user" | "assistant";
+}) {
+  if (from === "user") {
+    return (
+      <div className="flex items-start gap-4 justify-end">
+        <div className="bg-primary rounded-lg p-4 max-w-[70%] text-primary-foreground">
+          {children}
+        </div>
+        <Avatar className="w-8 h-8 border">
+          <AvatarImage src="/user.jpg" alt="" />
+          <AvatarFallback>U</AvatarFallback>
+        </Avatar>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-start gap-4">
+      <Avatar className="w-8 h-8 border">
+        <AvatarImage src="/chatbot.png" alt="" />
+        <AvatarFallback>YO</AvatarFallback>
+      </Avatar>
+      <div className="bg-muted rounded-lg p-4 max-w-[70%]">{children}</div>
+    </div>
   );
 }
