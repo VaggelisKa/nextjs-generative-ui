@@ -1,29 +1,23 @@
-"use client";
+import Link from "next/link";
 
-import { useChat } from "ai/react";
-import { Input } from "~/components/ui/input";
-
-export default function ChatPage() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
-
+export default function LandingPage() {
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      {messages.map((m) => (
-        <div key={m.id} className="whitespace-pre-wrap py-4">
-          {m.role === "user" ? "User: " : "AI: "}
-          {m.content}
-        </div>
-      ))}
+    <nav className="flex flex-col items-start justify-center gap-4 p-4">
+      <h1>Next.js + AWS bedrock showcase</h1>
 
-      <form onSubmit={handleSubmit}>
-        <Input
-          autoFocus
-          className="fixed bottom-0 w-full max-w-md lg:max-w-xl mb-8 "
-          value={input}
-          placeholder="Say something..."
-          onChange={handleInputChange}
-        />
-      </form>
-    </div>
+      <ol className="list-decimal list-inside space-y-1">
+        <li>
+          <Link className="text-blue-500 underline" href="/gen-ai-chat">
+            Generative AI Chat
+          </Link>
+        </li>
+
+        <li>
+          <Link className="text-blue-500 underline" href="/gen-ai-chat">
+            Generative UI Chat
+          </Link>
+        </li>
+      </ol>
+    </nav>
   );
 }

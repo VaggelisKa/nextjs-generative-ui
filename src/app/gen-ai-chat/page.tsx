@@ -3,7 +3,7 @@
 import { useChat } from "ai/react";
 import { Chat, MessageBox } from "~/components/Chat";
 
-export default function Page() {
+export default function GenAiChatPage() {
   const { messages, input, setInput, append } = useChat();
 
   const handleSubmit = async (event: any) => {
