@@ -13,7 +13,7 @@ export default function LandingPage() {
         </li>
 
         <li>
-          <Link className="text-blue-500 underline" href="/gen-ai-chat">
+          <Link className="text-blue-500 underline" href="/gen-ui-chat">
             Generative UI Chat
           </Link>
         </li>
