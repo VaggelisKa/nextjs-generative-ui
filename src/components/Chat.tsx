@@ -4,19 +4,20 @@ import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import React from "react";
-import { useChat } from "ai/react";
 
-export function ChatContainer() {
-  const { messages, input, setInput, append } = useChat();
-
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
-
-    append({ role: "user", content: input });
-  };
-
+export function Chat({
+  children,
+  onUserMessageSubmit,
+  onUserInputChange,
+}: {
+  children: React.ReactNode;
+  onUserMessageSubmit: (
+    event: React.FormEvent<HTMLFormElement> | undefined
+  ) => void;
+  onUserInputChange: (input: string) => void;
+}) {
   return (
-    <div className="flex flex-col min-h-screen md:min-h-[600px] min-w-[250px] md:min-w-[500px] bg-background rounded-2xl shadow-lg">
+    <div className="flex flex-col md:mt-24 min-h-[100svh] md:min-h-0 md:h-[600px] md:w-[500px] bg-background rounded-2xl shadow-lg">
       <header className="flex items-center gap-4 px-6 py-4 border-b">
         <Avatar className="w-10 h-10 border">
           <AvatarImage src="/chatbot.png" alt="" />
@@ -28,25 +29,17 @@ export function ChatContainer() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-auto p-6 space-y-4">
-        <MessageBox from="assistant">Hello, how can I help you?</MessageBox>
-
-        {messages.map((message: any) => (
-          <MessageBox key={message.id} from={message.role}>
-            {message.content}
-          </MessageBox>
-        ))}
-      </div>
+      <div className="flex-1 overflow-auto p-6 space-y-4">{children}</div>
 
       <div className="border-t p-4">
-        <form className="relative" onSubmit={handleSubmit}>
+        <form className="relative" onSubmit={onUserMessageSubmit}>
           <Textarea
             placeholder="Type your message..."
             name="message"
             id="message"
             rows={1}
             className="min-h-[48px] rounded-2xl resize-none p-4 border border-neutral-400 shadow-sm pr-16"
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => onUserInputChange(e.target.value)}
           />
           <Button
             type="submit"

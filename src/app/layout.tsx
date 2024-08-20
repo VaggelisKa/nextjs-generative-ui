@@ -22,7 +22,7 @@ export default function RootLayout({
         <body
           className={cn(
             inter.className,
-            "md:flex md:justify-center md:items-center min-h-screen"
+            "md:flex md:justify-center md:items-center"
           )}
         >
           {children}
