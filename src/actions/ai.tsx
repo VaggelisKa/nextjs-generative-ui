@@ -70,19 +70,21 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
 
   const aiState = getMutableAIState();
 
+  aiState.update((messages: ServerMessage[]) => [
+    ...messages,
+    {
+      role: "user",
+      content: message,
+    },
+  ]);
+
   const result = await streamUI({
     model: bedrock("anthropic.claude-3-sonnet-20240229-v1:0"),
     system: `
     You are a stock trading conversation bot and you can help users buy stocks, step by step.
     You and the user can discuss stock prices and the user can adjust the amount of stocks they want to buy, or place an order, in the UI.
     `,
-    messages: [
-      ...aiState.get(),
-      {
-        role: "user",
-        content: message,
-      },
-    ],
+    messages: [...aiState.get()],
     text: ({ content, done }) => {
       if (done) {
         aiState.done((messages: ServerMessage[]) => [
@@ -92,6 +94,8 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
             content,
           },
         ]);
+
+        return <div>{content}</div>;
       }
 
       return null;
@@ -138,7 +142,7 @@ export const AI = createAI<AIState, UIState>({
     {
       id: generateId(),
       role: "assistant",
-      display: "Hello, how can I help you sir?",
+      display: "Hello, how can I help you?",
     },
   ],
   actions: {
