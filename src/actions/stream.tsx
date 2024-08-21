@@ -3,7 +3,6 @@
 import { streamUI } from "ai/rsc";
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
 import { z } from "zod";
-import { WeatherComponent } from "~/components/WeatherComponent";
 import { GenericLoader } from "~/components/GenericLoader";
 
 const bedrock = createAmazonBedrock({
@@ -64,7 +63,7 @@ export async function streamComponent({ prompt }: { prompt: string }) {
             .string()
             .optional()
             .describe(
-              "The date asked by the user, The date should always be relative to the current date which is 14.08.2024 it should be formatted to 'dd.MM.yyyy'"
+              `The date asked by the user, The date should always be relative to the current date which is ${new Date()} it should be formatted to 'dd.MM.yyyy'`
             ),
         }),
         generate: async function* ({ companyName, date, companySymbol }) {
@@ -75,5 +74,5 @@ export async function streamComponent({ prompt }: { prompt: string }) {
     },
   });
 
-  return result.value;
+  return result;
 }
