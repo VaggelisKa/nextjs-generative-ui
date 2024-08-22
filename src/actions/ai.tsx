@@ -12,6 +12,8 @@ import {
 import { ReactNode } from "react";
 import { z } from "zod";
 import { GenericLoader } from "~/components/GenericLoader";
+import { getMockTimeseriesData } from "~/mock-data";
+import { format } from "date-fns";
 
 // Define the AI state and UI state types
 export type ServerMessage = {
@@ -30,40 +32,6 @@ let bedrock = createAmazonBedrock({
   accessKeyId: "AKIAV2TFLH22PJILH7OS",
   secretAccessKey: "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",
 });
-
-async function getStockPrice(
-  company: string,
-  companySymbol: string,
-  date?: string
-) {
-  let options = {
-    method: "POST",
-    headers: {
-      "x-rapidapi-key": process.env.RAPIDAPI_KEY ?? "",
-      "x-rapidapi-host": "yahoo-finance160.p.rapidapi.com",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      stock: companySymbol,
-      period: "1mo",
-    }),
-  };
-
-  console.log(companySymbol);
-
-  let response = await fetch(
-    "https://yahoo-finance160.p.rapidapi.com/history",
-    options
-  );
-  let data = (await response.json()) as {
-    metadata: { symbol: string };
-    records: { date: string; Close: string }[];
-  };
-
-  return `The stock price for ${data.metadata.symbol} is ${Number(
-    data.records[0].Close
-  ).toLocaleString("en-US", { currency: "USD" })} for date ${date}`;
-}
 
 async function submitUserMessage(message: string): Promise<ClientMessage> {
   "use server";
@@ -104,7 +72,6 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
       getStockPrice: {
         description: `Get the stock price for a company `,
         parameters: z.object({
-          companyName: z.string().describe("The name of the company"),
           companySymbol: z
             .string()
             .describe(
@@ -117,9 +84,46 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
               "The date asked by the user, The date should always be relative to the current date which is 14.08.2024 it should be formatted to 'dd.MM.yyyy'"
             ),
         }),
-        generate: async function* ({ companyName, date, companySymbol }) {
+        generate: async function* ({ date, companySymbol }) {
           yield <GenericLoader />;
-          return <div>{getStockPrice(companyName, companySymbol, date)}</div>;
+          let history = getMockTimeseriesData();
+
+          let historySnapshot = history.find(
+            (item) => format(item.timestamp, "yyyy-MM-dd") === date
+          );
+
+          return (
+            <div>
+              Value of {companySymbol} on {date} is {historySnapshot?.value}
+            </div>
+          );
+        },
+      },
+      getStockPriceHistory: {
+        description: `Get the stock price history for a company meaning the price of the company over a period of time`,
+        parameters: z.object({
+          companyName: z.string().describe("The name of the company"),
+          companySymbol: z
+            .string()
+            .describe(
+              "The symbol of the company if it doesnt exist use the name and find the symbol"
+            )
+            .refine((val) => val.toUpperCase()),
+          fromDate: z
+            .string()
+            .describe(
+              "The date from which to get the history, the current date is 2024-08-22 so relative dates should always start from today and the expected format is 'yyyy-MM-dd'"
+            ),
+        }),
+        generate: async function* ({ companyName, companySymbol, fromDate }) {
+          yield <GenericLoader />;
+          let history = getMockTimeseriesData(fromDate);
+
+          return (
+            <div>
+              Company: {companyName} Symbol: {companySymbol} From: {fromDate}{" "}
+            </div>
+          );
         },
       },
     },
