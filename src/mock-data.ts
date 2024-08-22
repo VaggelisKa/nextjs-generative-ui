@@ -4,7 +4,7 @@ export function getMockTimeseriesData(fromDate?: string) {
   let today = new Date();
   let mockTimeseries = [];
 
-  for (let i = 0; i < 365; i++) {
+  for (let i = 365; i > 0; i--) {
     mockTimeseries.push({
       timestamp: format(subDays(today, i), "yyyy-MM-dd"),
       value: Math.random() * 100,
@@ -16,7 +16,10 @@ export function getMockTimeseriesData(fromDate?: string) {
       (item) => format(item.timestamp, "yyyy-MM-dd") === fromDate
     );
 
-    mockTimeseries = mockTimeseries.slice(0, fromDateIndex + 1);
+    mockTimeseries = mockTimeseries.slice(
+      fromDateIndex + 1,
+      mockTimeseries.length
+    );
   }
 
   return mockTimeseries;

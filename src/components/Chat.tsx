@@ -17,7 +17,7 @@ export function Chat({
   onUserInputChange: (input: string) => void;
 }) {
   return (
-    <div className="flex flex-col md:mt-24 min-h-[100dvh] md:min-h-0 md:h-[600px] md:w-[500px] bg-background rounded-2xl shadow-lg">
+    <div className="flex flex-col md:mt-24 min-h-[100dvh] md:min-h-0 md:h-[700px] md:w-[500px] bg-background rounded-2xl shadow-lg">
       <header className="flex items-center gap-4 px-6 py-4 border-b">
         <Avatar className="w-10 h-10 border">
           <AvatarImage src="/chatbot.png" alt="" />
@@ -97,12 +97,12 @@ export function MessageBox({
   }
 
   return (
-    <div className="flex items-start gap-4">
+    <div className="flex items-start gap-4 w-full">
       <Avatar className="w-8 h-8 border">
         <AvatarImage src="/chatbot.png" alt="" />
         <AvatarFallback>YO</AvatarFallback>
       </Avatar>
-      <div className="bg-muted rounded-lg p-4 max-w-[70%]">{children}</div>
+      <div className="bg-muted rounded-lg p-4 max-w-[80%]">{children}</div>
     </div>
   );
 }

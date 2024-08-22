@@ -14,6 +14,7 @@ import { z } from "zod";
 import { GenericLoader } from "~/components/GenericLoader";
 import { getMockTimeseriesData } from "~/mock-data";
 import { format } from "date-fns";
+import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
 
 // Define the AI state and UI state types
 export type ServerMessage = {
@@ -121,7 +122,7 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
 
           return (
             <div>
-              Company: {companyName} Symbol: {companySymbol} From: {fromDate}{" "}
+              <PriceHistoryChartCard data={history} companyName={companyName} />
             </div>
           );
         },
