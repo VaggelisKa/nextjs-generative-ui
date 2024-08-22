@@ -60,7 +60,11 @@ export function PriceHistoryChartCard({
               interval={20}
               tickFormatter={(value) => format(new Date(value), "MMM")}
             />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent />}
+              labelFormatter={(value) => format(new Date(value), "dd.MM.yyyy")}
+            />
             <Line
               dataKey="value"
               type="natural"
