@@ -2,10 +2,8 @@
 
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
-import { FormEvent, ReactNode, useId, useState } from "react";
-import { set } from "zod";
-import { AI, ClientMessage, UIState } from "~/actions/ai";
-import { streamComponent } from "~/actions/stream";
+import { FormEvent, useId, useState } from "react";
+import { AI, ClientMessage } from "~/actions/ai";
 import { Chat, MessageBox } from "~/components/Chat";
 
 export default function GenUIChatPage() {
