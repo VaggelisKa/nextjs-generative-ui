@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { format } from "date-fns";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import {
@@ -57,7 +56,7 @@ export function PriceHistoryChartCard({
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              interval={20}
+              interval={data.length < 30 ? 5 : 20}
               tickFormatter={(value) => format(new Date(value), "MMM")}
             />
             <ChartTooltip

@@ -12,9 +12,10 @@ import {
 import { ReactNode } from "react";
 import { z } from "zod";
 import { GenericLoader } from "~/components/GenericLoader";
-import { getMockTimeseriesData } from "~/mock-data";
+import { getMockPaymentTransactions, getMockTimeseriesData } from "~/mock-data";
 import { format } from "date-fns";
 import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
+import { PaymentDetails } from "~/components/PaymentDetails";
 
 // Define the AI state and UI state types
 export type ServerMessage = {
@@ -50,8 +51,7 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
   const result = await streamUI({
     model: bedrock("anthropic.claude-3-sonnet-20240229-v1:0"),
     system: `
-    You are a stock trading conversation bot and you can help users buy stocks, step by step.
-    You and the user can discuss stock prices and the user can adjust the amount of stocks they want to buy, or place an order, in the UI.
+    You are a helpful banking assistant and you can help users manage their finances.
     `,
     messages: [...aiState.get()],
     text: ({ content, done }) => {
@@ -63,13 +63,45 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
             content,
           },
         ]);
-
-        return <div>{content}</div>;
       }
 
-      return null;
+      return <div>{content}</div>;
     },
     tools: {
+      getBalance: {
+        description: `Get the balance of the account of the user for a specific account or if an account number is not provided you should show the balance for all accounts`,
+        parameters: z.object({
+          accountNumber: z
+            .number()
+            .optional()
+            .describe(
+              "The account number if the user desires the balance on a specific account"
+            ),
+        }),
+        generate: async function* ({ accountNumber }) {
+          yield <GenericLoader />;
+
+          if (!accountNumber) {
+            return <div>Your balance is $1000</div>;
+          }
+
+          return <div>Your balance on account {accountNumber} is $1000</div>;
+        },
+      },
+      getPaymentTransactions: {
+        description: `Get the transactions of the user, the user might also ask to get their expense history or income history`,
+        parameters: z.object({
+          accountNumber: z.string().describe("The account number"),
+        }),
+        generate: async function* ({}) {
+          yield <GenericLoader />;
+          let payments = getMockPaymentTransactions();
+
+          console.log("Payments", payments);
+
+          return <PaymentDetails />;
+        },
+      },
       getStockPrice: {
         description: `Get the stock price for a company `,
         parameters: z.object({
@@ -112,8 +144,9 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
             .refine((val) => val.toUpperCase()),
           fromDate: z
             .string()
+            .optional()
             .describe(
-              "The date from which to get the history, the current date is 2024-08-22 so relative dates should always start from today and the expected format is 'yyyy-MM-dd'"
+              "The date from which to get the history, the current date is 2024-08-22 so relative dates should always start from today and the expected format is 'yyyy-MM-dd', if the user doesnt mention a date consider it undefined"
             ),
         }),
         generate: async function* ({ companyName, companySymbol, fromDate }) {
