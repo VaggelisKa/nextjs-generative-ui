@@ -1,26 +1,14 @@
-import { SSTConfig } from "sst";
-import { NextjsSite } from "sst/constructs";
+/// <reference path="./.sst/platform/config.d.ts" />
 
-export default {
-  config(_input) {
+export default $config({
+  app(input) {
     return {
       name: "nextjs-generative-ui",
-      region: "eu-central-1",
+      removal: "remove",
+      home: "aws",
     };
   },
-  stacks(app) {
-    app.stack(function Site({ stack }) {
-      const site = new NextjsSite(stack, "nextjs-generative-ui-site", {
-        runtime: "nodejs20.x",
-        timeout: "30 seconds",
-        memorySize: "2048 MB",
-      });
-
-      app.setDefaultRemovalPolicy("destroy");
-
-      stack.addOutputs({
-        SiteUrl: site.url,
-      });
-    });
+  async run() {
+    new sst.aws.Nextjs("nextjs-generative-ui-site");
   },
-} satisfies SSTConfig;
+});
