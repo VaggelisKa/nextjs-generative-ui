@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "next dev",
+    "lint": "next lint",
+    "start": "next start"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "0.0.22",
@@ -22,9 +22,9 @@
     "react-dom": "18.3.1",
     "recharts": "2.12.7",
     "server-only": "0.0.1",
+    "sst": "3.0.83",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "sst": "3.0.83",
     "zod": "^3.23.8"
   },
   "devDependencies": {
