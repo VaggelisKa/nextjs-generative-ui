@@ -17,6 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    // @ts-ignore
     <AI>
       <html lang="en">
         <body
