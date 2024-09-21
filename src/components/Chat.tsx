@@ -29,7 +29,7 @@ export function Chat({
   }, [children]);
 
   return (
-    <div className="flex flex-col h-[100dvh] w-full">
+    <div className="flex flex-col h-screen w-full">
       <ScrollArea className="flex-grow p-4">
         <div className="space-y-8">{children}</div>
         <div className="invisible" ref={messagesEndRef} aria-hidden />
