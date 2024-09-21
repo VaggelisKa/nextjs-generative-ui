@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import { Textarea } from "~/components/ui/textarea";
 
 export function Chat({
@@ -16,22 +17,25 @@ export function Chat({
   ) => void;
   onUserInputChange?: (input: string) => void;
 }) {
+  let messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [children]);
+
   return (
-    <div className="flex flex-col md:mt-24 min-h-[100dvh] md:min-h-0 md:h-[700px] md:w-[500px] bg-background rounded-2xl shadow-lg">
-      <header className="flex items-center gap-4 px-6 py-4 border-b">
-        <Avatar className="w-10 h-10 border">
-          <AvatarImage src="/chatbot.png" alt="" />
-          <AvatarFallback>CB</AvatarFallback>
-        </Avatar>
-        <div>
-          <div className="font-medium">Chatbot</div>
-          <div className="text-sm text-muted-foreground">Online</div>
-        </div>
-      </header>
+    <div className="flex flex-col h-[100dvh] w-full">
+      <ScrollArea className="flex-grow p-4">
+        <div className="space-y-8">{children}</div>
+        <div className="invisible" ref={messagesEndRef} aria-hidden />
+      </ScrollArea>
 
-      <div className="flex-1 overflow-auto p-6 space-y-4">{children}</div>
-
-      <div className="border-t p-4">
+      <div className="p-4">
         <form className="relative" onSubmit={onUserMessageSubmit}>
           <Textarea
             placeholder="Type your message..."
@@ -55,6 +59,27 @@ export function Chat({
   );
 }
 
+export function MessageBox({
+  children,
+  from,
+}: {
+  children: React.ReactNode;
+  from: "user" | "assistant";
+}) {
+  return (
+    <ul className="flex items-start gap-2 justify-start w-full">
+      <Avatar className="w-6 h-6 border">
+        <AvatarImage
+          src={from === "user" ? "/user.jpg" : "/chatbot.png"}
+          alt=""
+        />
+        <AvatarFallback>{from === "user" ? "U" : "CB"}</AvatarFallback>
+      </Avatar>
+      <li className="text-black text-sm leading-6">{children}</li>
+    </ul>
+  );
+}
+
 function ArrowUpIcon(props: any) {
   return (
     <svg
@@ -72,37 +97,5 @@ function ArrowUpIcon(props: any) {
       <path d="m5 12 7-7 7 7" />
       <path d="M12 19V5" />
     </svg>
-  );
-}
-
-export function MessageBox({
-  children,
-  from,
-}: {
-  children: React.ReactNode;
-  from: "user" | "assistant";
-}) {
-  if (from === "user") {
-    return (
-      <ul className="flex items-start gap-4 justify-end">
-        <li className="bg-primary rounded-lg p-4 max-w-[70%] text-primary-foreground">
-          {children}
-        </li>
-        <Avatar className="w-8 h-8 border">
-          <AvatarImage src="/user.jpg" alt="" />
-          <AvatarFallback>U</AvatarFallback>
-        </Avatar>
-      </ul>
-    );
-  }
-
-  return (
-    <div className="flex items-start gap-4 w-full">
-      <Avatar className="w-8 h-8 border">
-        <AvatarImage src="/chatbot.png" alt="" />
-        <AvatarFallback>YO</AvatarFallback>
-      </Avatar>
-      <div className="bg-muted rounded-lg p-4 max-w-[80%]">{children}</div>
-    </div>
   );
 }
