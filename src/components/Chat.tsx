@@ -29,8 +29,11 @@ export function Chat({
   }, [children]);
 
   return (
-    <div className="flex flex-col h-screen w-full">
-      <ScrollArea className="flex-grow p-4">
+    <div className="flex flex-col h-dvh w-full bg-white">
+      <ScrollArea
+        className="flex-1 overflow-y-auto p-4"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
         <div className="space-y-8">{children}</div>
         <div className="invisible" ref={messagesEndRef} aria-hidden />
       </ScrollArea>
