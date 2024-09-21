@@ -37,6 +37,8 @@ let bedrock = createAmazonBedrock({
 
 async function submitUserMessage(message: string): Promise<ClientMessage> {
   "use server";
+
+  return {} as ClientMessage;
 }
 
 export type AIState = ServerMessage[];
