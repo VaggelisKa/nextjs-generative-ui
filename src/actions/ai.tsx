@@ -1,21 +1,8 @@
 import "server-only";
 
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
-import { generateId, generateText, streamText } from "ai";
-import {
-  createAI,
-  createStreamableUI,
-  createStreamableValue,
-  getMutableAIState,
-  streamUI,
-} from "ai/rsc";
+import { createAI } from "ai/rsc";
 import { ReactNode } from "react";
-import { z } from "zod";
-import { GenericLoader } from "~/components/GenericLoader";
-import { getMockPaymentTransactions, getMockTimeseriesData } from "~/mock-data";
-import { format } from "date-fns";
-import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
-import { PaymentDetails } from "~/components/PaymentDetails";
 
 // Define the AI state and UI state types
 export type ServerMessage = {

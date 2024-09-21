@@ -1,9 +1,9 @@
 "use client";
 
-import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
-import { Textarea } from "~/components/ui/textarea";
-import { Button } from "~/components/ui/button";
 import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
+import { Textarea } from "~/components/ui/textarea";
 
 export function Chat({
   children,
@@ -12,9 +12,9 @@ export function Chat({
 }: {
   children: React.ReactNode;
   onUserMessageSubmit: (
-    event: React.FormEvent<HTMLFormElement> | undefined
+    event: React.FormEvent<HTMLFormElement> | undefined,
   ) => void;
-  onUserInputChange: (input: string) => void;
+  onUserInputChange?: (input: string) => void;
 }) {
   return (
     <div className="flex flex-col md:mt-24 min-h-[100dvh] md:min-h-0 md:h-[700px] md:w-[500px] bg-background rounded-2xl shadow-lg">
@@ -39,7 +39,7 @@ export function Chat({
             id="message"
             rows={1}
             className="min-h-[48px] rounded-2xl resize-none p-4 border border-neutral-400 shadow-sm pr-16"
-            onChange={(e) => onUserInputChange(e.target.value)}
+            onChange={(e) => onUserInputChange?.(e.target.value)}
           />
           <Button
             type="submit"
@@ -84,15 +84,15 @@ export function MessageBox({
 }) {
   if (from === "user") {
     return (
-      <div className="flex items-start gap-4 justify-end">
-        <div className="bg-primary rounded-lg p-4 max-w-[70%] text-primary-foreground">
+      <ul className="flex items-start gap-4 justify-end">
+        <li className="bg-primary rounded-lg p-4 max-w-[70%] text-primary-foreground">
           {children}
-        </div>
+        </li>
         <Avatar className="w-8 h-8 border">
           <AvatarImage src="/user.jpg" alt="" />
           <AvatarFallback>U</AvatarFallback>
         </Avatar>
-      </div>
+      </ul>
     );
   }
 
