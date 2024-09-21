@@ -12,8 +12,6 @@ export function getMockTimeseriesData(fromDate?: string) {
     });
   }
 
-  console.log("From date", fromDate);
-
   if (fromDate) {
     let fromDateIndex = mockTimeseries.findIndex(
       (item) => format(item.timestamp, "yyyy-MM-dd") === fromDate
