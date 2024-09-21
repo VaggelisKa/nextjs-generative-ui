@@ -1,21 +1,15 @@
 import "server-only";
 
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
-import { generateId, generateText, streamText } from "ai";
-import {
-  createAI,
-  createStreamableUI,
-  createStreamableValue,
-  getMutableAIState,
-  streamUI,
-} from "ai/rsc";
+import { generateId } from "ai";
+import { createAI, getMutableAIState, streamUI } from "ai/rsc";
+import { format } from "date-fns";
 import { ReactNode } from "react";
 import { z } from "zod";
 import { GenericLoader } from "~/components/GenericLoader";
-import { getMockPaymentTransactions, getMockTimeseriesData } from "~/mock-data";
-import { format } from "date-fns";
-import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
 import { PaymentDetails } from "~/components/PaymentDetails";
+import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
+import { getMockPaymentTransactions, getMockTimeseriesData } from "~/mock-data";
 
 // Define the AI state and UI state types
 export type ServerMessage = {
@@ -75,7 +69,7 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
             .number()
             .optional()
             .describe(
-              "The account number if the user desires the balance on a specific account"
+              "The account number if the user desires the balance on a specific account",
             ),
         }),
         generate: async function* ({ accountNumber }) {
@@ -108,13 +102,13 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
           companySymbol: z
             .string()
             .describe(
-              "The symbol of the company if it doesnt exist use the name and find the symbol"
+              "The symbol of the company if it doesnt exist use the name and find the symbol",
             ),
           date: z
             .string()
             .optional()
             .describe(
-              "The date asked by the user, The date should always be relative to the current date which is 14.08.2024 it should be formatted to 'dd.MM.yyyy'"
+              "The date asked by the user, The date should always be relative to the current date which is 14.08.2024 it should be formatted to 'dd.MM.yyyy'",
             ),
         }),
         generate: async function* ({ date, companySymbol }) {
@@ -122,7 +116,7 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
           let history = getMockTimeseriesData();
 
           let historySnapshot = history.find(
-            (item) => format(item.timestamp, "yyyy-MM-dd") === date
+            (item) => format(item.timestamp, "yyyy-MM-dd") === date,
           );
 
           return (
@@ -139,14 +133,14 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
           companySymbol: z
             .string()
             .describe(
-              "The symbol of the company if it doesnt exist use the name and find the symbol"
+              "The symbol of the company if it doesnt exist use the name and find the symbol",
             )
             .refine((val) => val.toUpperCase()),
           fromDate: z
             .string()
             .optional()
             .describe(
-              "The date from which to get the history, the current date is 2024-08-22 so relative dates should always start from today and the expected format is 'yyyy-MM-dd', if the user doesnt mention a date consider it undefined"
+              "The date from which to get the history, the current date is 2024-08-22 so relative dates should always start from today and the expected format is 'yyyy-MM-dd', if the user doesnt mention a date consider it undefined",
             ),
         }),
         generate: async function* ({ companyName, companySymbol, fromDate }) {
