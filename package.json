@@ -9,11 +9,11 @@
     "start": "next start"
   },
   "dependencies": {
-    "@ai-sdk/amazon-bedrock": "0.0.15",
+    "@ai-sdk/amazon-bedrock": "0.0.26",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
-    "ai": "3.3.16",
+    "ai": "3.4.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
