@@ -6,38 +6,54 @@ const ACCOUNTS = [
     id: generateId(),
     name: "Checking Account",
     accountType: "checking",
-    balance: 1000,
+    balance: 100,
   },
   {
     id: generateId(),
     name: "ASK Account",
     accountType: "savings",
-    balance: 123000,
+    balance: 1200,
   },
   {
     id: generateId(),
     name: "Normal Deposit",
     accountType: "savings",
-    balance: 5000,
+    balance: 500,
   },
   {
     id: generateId(),
     name: "My favorite account",
     accountType: "credit",
-    balance: 10000,
+    balance: 100,
+  },
+  {
+    id: generateId(),
+    name: "Investment 1",
+    accountType: "investment",
+    balance: 472,
+  },
+  {
+    id: generateId(),
+    name: "Investment 2",
+    accountType: "investment",
+    balance: 472,
   },
 ];
+
+async function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export async function getAccounts({
   type,
   name,
 }: {
-  type?: string;
+  type?: string[];
   name?: string;
 }) {
   return ACCOUNTS.filter(
     (account) =>
-      (type && account.accountType === type) ||
+      (type && type.includes(account.accountType)) ||
       (name && account.name.toLowerCase().includes(name?.toLowerCase())),
   );
 }
@@ -46,10 +62,10 @@ export async function getAccountsSummary({
   type,
   name,
 }: {
-  type?: string;
+  type?: string[];
   name?: string;
 }) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await wait(2000);
   let accounts = await getAccounts({ type, name });
 
   return accounts.reduce(

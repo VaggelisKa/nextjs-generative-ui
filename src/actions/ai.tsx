@@ -6,6 +6,7 @@ import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { format } from "date-fns";
 import { ReactNode } from "react";
 import { z } from "zod";
+import { AccountBalancePieChart } from "~/components/account-balance-pie-chart";
 import { GenericLoader } from "~/components/GenericLoader";
 import { PaymentDetails } from "~/components/PaymentDetails";
 import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
@@ -72,9 +73,10 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
           Get the balance (could also be referred to as summary) of the accounts owned by a user. 
           The user must specify the name of the types of account or the type of the account itself.
           If the user provides both options do not use the tool twice, just combine the two options.
+          If the user asks for all accounts the supported types are checking, savings, credit, investment and other.
         `,
         parameters: z.object({
-          type: z.string().optional(),
+          type: z.array(z.string()),
           name: z
             .string()
             .optional()
@@ -87,7 +89,16 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
 
           let accounts = await getAccountsSummary({ name, type });
 
-          return <pre>accounts: {JSON.stringify(accounts, null, 2)}</pre>;
+          return (
+            <AccountBalancePieChart
+              chartData={Object.entries(accounts).map(
+                ([accountType, balance]) => ({
+                  balance,
+                  accountType,
+                }),
+              )}
+            />
+          );
         },
       },
       getPaymentTransactions: {
