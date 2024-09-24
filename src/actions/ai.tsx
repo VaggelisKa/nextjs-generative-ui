@@ -6,10 +6,15 @@ import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { format } from "date-fns";
 import { ReactNode } from "react";
 import { z } from "zod";
+import { AccountBalancePieChart } from "~/components/account-balance-pie-chart";
 import { GenericLoader } from "~/components/GenericLoader";
 import { PaymentDetails } from "~/components/PaymentDetails";
 import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
-import { getMockPaymentTransactions, getMockTimeseriesData } from "~/mock-data";
+import {
+  getAccountsSummary,
+  getMockPaymentTransactions,
+  getMockTimeseriesData,
+} from "~/mock-data";
 
 // Define the AI state and UI state types
 export type ServerMessage = {
@@ -45,7 +50,8 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
   const result = await streamUI({
     model: bedrock("anthropic.claude-3-sonnet-20240229-v1:0"),
     system: `
-    You are a helpful banking assistant and you can help users manage their finances.
+    You are a helpful banking assistant and you can help users manage their finances. If the user asks anything outside of 
+    the banking space please respond with "I am sorry, I don't know how to help you with that."
     `,
     messages: [...aiState.get()],
     text: ({ content, done }) => {
@@ -62,24 +68,37 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
       return <div>{content}</div>;
     },
     tools: {
-      getBalance: {
-        description: `Get the balance of the account of the user for a specific account or if an account number is not provided you should show the balance for all accounts`,
+      getSpecificAccountBalance: {
+        description: `
+          Get the balance (could also be referred to as summary) of the accounts owned by a user. 
+          The user must specify the name of the types of account or the type of the account itself.
+          If the user provides both options do not use the tool twice, just combine the two options.
+          If the user asks for all accounts the supported types are checking, savings, credit, investment and other.
+        `,
         parameters: z.object({
-          accountNumber: z
-            .number()
+          type: z.array(z.string()),
+          name: z
+            .string()
             .optional()
             .describe(
-              "The account number if the user desires the balance on a specific account",
+              "Either the name of the account or anything that the users mention to distinguish those accounts, e.g my favorite account",
             ),
         }),
-        generate: async function* ({ accountNumber }) {
+        generate: async function* ({ name, type }) {
           yield <GenericLoader />;
 
-          if (!accountNumber) {
-            return <div>Your balance is $1000</div>;
-          }
+          let accounts = await getAccountsSummary({ name, type });
 
-          return <div>Your balance on account {accountNumber} is $1000</div>;
+          return (
+            <AccountBalancePieChart
+              chartData={Object.entries(accounts).map(
+                ([accountType, balance]) => ({
+                  balance,
+                  accountType,
+                }),
+              )}
+            />
+          );
         },
       },
       getPaymentTransactions: {
