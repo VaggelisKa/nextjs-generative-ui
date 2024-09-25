@@ -17,7 +17,9 @@ export function Chat({
   ) => void;
   onUserInputChange?: (input: string) => void;
 }) {
+  let formRef = useRef<HTMLFormElement>(null);
   let messagesEndRef = useRef<HTMLDivElement>(null);
+  let inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -39,14 +41,28 @@ export function Chat({
       </ScrollArea>
 
       <div className="p-4">
-        <form className="relative" onSubmit={onUserMessageSubmit}>
+        <form ref={formRef} className="relative" onSubmit={onUserMessageSubmit}>
           <Textarea
+            ref={inputRef}
             placeholder="Type your message..."
             name="message"
             id="message"
             rows={1}
             className="min-h-[48px] rounded-2xl resize-none p-4 border border-neutral-400 shadow-sm pr-16"
             onChange={(e) => onUserInputChange?.(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                formRef.current?.requestSubmit();
+
+                if (inputRef.current) {
+                  inputRef.current.value = "";
+                }
+              }
+            }}
+            autoFocus
           />
           <Button
             type="submit"
