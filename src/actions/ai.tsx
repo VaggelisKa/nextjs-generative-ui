@@ -12,8 +12,8 @@ import { PaymentDetails } from "~/components/PaymentDetails";
 import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
 import {
   getAccountsSummary,
-  getMockPaymentTransactions,
   getMockTimeseriesData,
+  getPaymentTransactions,
 } from "~/mock-data";
 
 // Define the AI state and UI state types
@@ -102,17 +102,25 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
         },
       },
       getPaymentTransactions: {
-        description: `Get the transactions of the user, the user might also ask to get their expense history or income history`,
+        description: `
+          Get the transactions or payment history of the user, the user might also specify a relative
+          date as a starting point. For example it could be the last month or the last year. 
+        `,
         parameters: z.object({
-          accountNumber: z.string().describe("The account number"),
+          fromDate: z
+            .string()
+            .optional()
+            .describe(
+              `The date from which to get the history, formatted as yyyy-MM-dd. The current date is ${format(new Date(), "yyyy-MM-dd")} so relative dates should always 
+              start from today and the expected format is 'yyyy-MM-dd', if the user doesnt mention a date default it to last year`,
+            ),
         }),
-        generate: async function* ({}) {
+        generate: async function* ({ fromDate }) {
           yield <GenericLoader />;
-          let payments = getMockPaymentTransactions();
 
-          console.log("Payments", payments);
+          let payments = await getPaymentTransactions(fromDate);
 
-          return <PaymentDetails />;
+          return <PaymentDetails payments={payments} />;
         },
       },
       getStockPrice: {
