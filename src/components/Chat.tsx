@@ -56,8 +56,10 @@ export function Chat({
                 e.stopPropagation();
 
                 formRef.current?.requestSubmit();
-                // @ts-ignore
-                inputRef.current.value = "";
+
+                if (inputRef.current) {
+                  inputRef.current.value = "";
+                }
               }
             }}
             autoFocus
