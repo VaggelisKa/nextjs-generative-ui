@@ -40,6 +40,49 @@ const ACCOUNTS = [
   },
 ];
 
+const PAYMENTS = [
+  {
+    id: generateId(),
+    date: "2023-07-01",
+    from: "Checking Account",
+    to: "Savings Account",
+    type: "Transfer",
+    amount: 500.0,
+  },
+  {
+    id: generateId(),
+    date: "2023-07-02",
+    from: "Payroll",
+    to: "Checking Account",
+    type: "Deposit",
+    amount: 2500.0,
+  },
+  {
+    id: generateId(),
+    date: "2023-07-03",
+    from: "Checking Account",
+    to: "Rent",
+    type: "Withdraw",
+    amount: 1200.0,
+  },
+  {
+    id: generateId(),
+    date: "2023-07-04",
+    from: "Savings Account",
+    to: "Investment Account",
+    type: "Transfer",
+    amount: 1000.0,
+  },
+  {
+    id: generateId(),
+    date: "2023-07-05",
+    from: "Checking Account",
+    to: "Credit Card Payment",
+    type: "Withdraw",
+    amount: 300.0,
+  },
+];
+
 async function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
