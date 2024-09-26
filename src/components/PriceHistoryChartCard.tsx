@@ -2,14 +2,7 @@
 
 import { format } from "date-fns";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -32,12 +25,11 @@ export function PriceHistoryChartCard({
   data: { timestamp: string; value: number }[];
 }) {
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-md">
           Price history of {companyName}
         </CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
