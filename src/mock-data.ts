@@ -1,6 +1,15 @@
 import { generateId } from "ai";
 import { format, subDays } from "date-fns";
 
+export type Payment = {
+  id: string;
+  timestamp: string;
+  value: number;
+  fromAccount: string;
+  toAccount: string;
+  transferType: "deposit" | "withdrawal";
+};
+
 const ACCOUNTS = [
   {
     id: generateId(),
@@ -40,8 +49,10 @@ const ACCOUNTS = [
   },
 ];
 
-async function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+async function wait(ms?: number) {
+  return new Promise((resolve) =>
+    setTimeout(resolve, ms || Math.random() * 1500),
+  );
 }
 
 export async function getAccounts({
@@ -103,18 +114,15 @@ export function getMockTimeseriesData(fromDate?: string) {
   return mockTimeseries;
 }
 
-export function getMockPaymentTransactions(fromDate?: string) {
-  let today = new Date();
-  let mockTransactions: {
-    timestamp: string;
-    value: number;
-    fromAccount: string;
-    toAccount: string;
-    transferType: "deposit" | "withdrawal";
-  }[] = [];
+export async function getPaymentTransactions(fromDate?: string) {
+  await wait();
 
-  for (let i = 0; i < 365; i++) {
+  let today = new Date();
+  let mockTransactions: Payment[] = [];
+
+  for (let i = 0; i < 370; i++) {
     mockTransactions.push({
+      id: generateId(),
       timestamp: format(subDays(today, i), "yyyy-MM-dd"),
       value: Math.random() * 100,
       fromAccount: generateId(),
@@ -125,13 +133,10 @@ export function getMockPaymentTransactions(fromDate?: string) {
 
   if (fromDate) {
     let fromDateIndex = mockTransactions.findIndex(
-      (item) => format(item.timestamp, "yyyy-MM-dd") === fromDate,
+      (item) => item.timestamp === fromDate,
     );
 
-    mockTransactions = mockTransactions.slice(
-      fromDateIndex + 1,
-      mockTransactions.length,
-    );
+    mockTransactions = mockTransactions.slice(1, fromDateIndex + 1);
   }
 
   return mockTransactions;
