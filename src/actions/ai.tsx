@@ -12,8 +12,8 @@ import { PaymentDetails } from "~/components/PaymentDetails";
 import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
 import {
   getAccountsSummary,
-  getMockTimeseriesData,
   getPaymentTransactions,
+  getPriceHistory,
 } from "~/mock-data";
 
 // Define the AI state and UI state types
@@ -124,31 +124,34 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
         },
       },
       getStockPrice: {
-        description: `Get the stock price for a company `,
+        description: `Get the stock price for a company`,
         parameters: z.object({
           companySymbol: z
             .string()
             .describe(
               "The symbol of the company if it doesnt exist use the name and find the symbol",
             ),
-          date: z
+          fromDate: z
             .string()
             .optional()
             .describe(
-              "The date asked by the user, The date should always be relative to the current date which is 14.08.2024 it should be formatted to 'dd.MM.yyyy'",
+              `
+              The date from which to get the history, formatted as yyyy-MM-dd. The current date is ${format(new Date(), "yyyy-MM-dd")} 
+              so relative dates should always start from today and the expected format is 'yyyy-MM-dd', if the user doesnt mention a date default it to ${format(new Date(), "yyyy-MM-dd")}
+              `,
             ),
         }),
-        generate: async function* ({ date, companySymbol }) {
+        generate: async function* ({ fromDate, companySymbol }) {
           yield <GenericLoader />;
-          let history = getMockTimeseriesData();
-
-          let historySnapshot = history.find(
-            (item) => format(item.timestamp, "yyyy-MM-dd") === date,
-          );
+          let history = await getPriceHistory(fromDate);
 
           return (
             <div>
-              Value of {companySymbol} on {date} is {historySnapshot?.value}
+              Value of {companySymbol} on {fromDate} is{" "}
+              {history.at(0)?.value.toLocaleString(undefined, {
+                style: "currency",
+                currency: "USD",
+              })}
             </div>
           );
         },
@@ -167,12 +170,16 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
             .string()
             .optional()
             .describe(
-              "The date from which to get the history, the current date is 2024-08-22 so relative dates should always start from today and the expected format is 'yyyy-MM-dd', if the user doesnt mention a date consider it undefined",
+              `
+              The date from which to get the history, formatted as yyyy-MM-dd. The current date is ${format(new Date(), "yyyy-MM-dd")} 
+              so relative dates should always 
+              start from today and the expected format is 'yyyy-MM-dd', if the user doesnt mention a date default it to last year
+              `,
             ),
         }),
-        generate: async function* ({ companyName, companySymbol, fromDate }) {
+        generate: async function* ({ companyName, fromDate }) {
           yield <GenericLoader />;
-          let history = getMockTimeseriesData(fromDate);
+          let history = await getPriceHistory(fromDate);
 
           return (
             <div>

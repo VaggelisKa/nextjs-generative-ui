@@ -89,11 +89,13 @@ export async function getAccountsSummary({
   );
 }
 
-export function getMockTimeseriesData(fromDate?: string) {
+export async function getPriceHistory(fromDate?: string) {
+  await wait();
+
   let today = new Date();
   let mockTimeseries = [];
 
-  for (let i = 365; i > 0; i--) {
+  for (let i = 365; i > 0; i -= 1) {
     mockTimeseries.push({
       timestamp: format(subDays(today, i), "yyyy-MM-dd"),
       value: Math.random() * 100,
