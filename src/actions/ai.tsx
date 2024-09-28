@@ -1,6 +1,5 @@
 import "server-only";
 
-import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
 import { generateId } from "ai";
 import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { format } from "date-fns";
@@ -10,6 +9,7 @@ import { AccountBalancePieChart } from "~/components/account-balance-pie-chart";
 import { GenericLoader } from "~/components/GenericLoader";
 import { PaymentDetails } from "~/components/PaymentDetails";
 import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
+import { bedrock } from "~/lib/bedrock";
 import {
   getAccountsSummary,
   getPaymentTransactions,
@@ -18,21 +18,18 @@ import {
 
 // Define the AI state and UI state types
 export type ServerMessage = {
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   content: string;
 };
 
 export type ClientMessage = {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   display: ReactNode;
 };
 
-let bedrock = createAmazonBedrock({
-  region: "eu-central-1",
-  accessKeyId: "AKIAV2TFLH22PJILH7OS",
-  secretAccessKey: "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",
-});
+export type AIState = ServerMessage[];
+export type UIState = ClientMessage[];
 
 async function submitUserMessage(message: string): Promise<ClientMessage> {
   "use server";
@@ -198,16 +195,13 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
   };
 }
 
-export type AIState = ServerMessage[];
-export type UIState = ClientMessage[];
-
 // Create the AI provider with the initial states and allowed actions
 export const AI = createAI<AIState, UIState>({
   initialAIState: [],
   initialUIState: [
     {
       id: generateId(),
-      role: "assistant",
+      role: "system",
       display: "Hello, how can I help you?",
     },
   ],

@@ -1,5 +1,6 @@
 "use client";
 
+import { Message } from "ai";
 import React, { useEffect, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -12,9 +13,7 @@ export function Chat({
   onUserInputChange,
 }: {
   children: React.ReactNode;
-  onUserMessageSubmit: (
-    event: React.FormEvent<HTMLFormElement> | undefined,
-  ) => void;
+  onUserMessageSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onUserInputChange?: (input: string) => void;
 }) {
   let formRef = useRef<HTMLFormElement>(null);
@@ -83,7 +82,7 @@ export function MessageBox({
   from,
 }: {
   children: React.ReactNode;
-  from: "user" | "assistant";
+  from: Message["role"];
 }) {
   return (
     <ul className="flex items-start gap-2 justify-start w-full">
