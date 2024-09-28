@@ -1,6 +1,5 @@
 import "server-only";
 
-import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
 import { generateId } from "ai";
 import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { format } from "date-fns";
@@ -10,6 +9,7 @@ import { AccountBalancePieChart } from "~/components/account-balance-pie-chart";
 import { GenericLoader } from "~/components/GenericLoader";
 import { PaymentDetails } from "~/components/PaymentDetails";
 import { PriceHistoryChartCard } from "~/components/PriceHistoryChartCard";
+import { bedrock } from "~/lib/bedrock";
 import {
   getAccountsSummary,
   getPaymentTransactions,
@@ -30,12 +30,6 @@ export type ClientMessage = {
 
 export type AIState = ServerMessage[];
 export type UIState = ClientMessage[];
-
-let bedrock = createAmazonBedrock({
-  region: "eu-central-1",
-  accessKeyId: "AKIAV2TFLH22HRXD2BIL",
-  secretAccessKey: "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",
-});
 
 async function submitUserMessage(message: string): Promise<ClientMessage> {
   "use server";
