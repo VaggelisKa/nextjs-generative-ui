@@ -1,12 +1,23 @@
 "use client";
 
+import { generateId } from "ai";
 import { useChat } from "ai/react";
+
+import { FormEvent } from "react";
 import { Chat, MessageBox } from "~/components/Chat";
 
 export default function GenAiChatPage() {
-  const { messages, input, setInput, append } = useChat();
+  const { messages, input, setInput, append } = useChat({
+    initialMessages: [
+      {
+        id: generateId(),
+        role: "system",
+        content: "Hello, how can I help you?",
+      },
+    ],
+  });
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     append({ role: "user", content: input });
@@ -14,9 +25,7 @@ export default function GenAiChatPage() {
 
   return (
     <Chat onUserInputChange={setInput} onUserMessageSubmit={handleSubmit}>
-      <MessageBox from="assistant">Hello, how can I help you?</MessageBox>
-
-      {messages.map((message: any) => (
+      {messages.map((message) => (
         <MessageBox key={message.id} from={message.role}>
           {message.content}
         </MessageBox>

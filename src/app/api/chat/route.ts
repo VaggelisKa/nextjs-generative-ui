@@ -12,7 +12,6 @@ export async function POST(req: Request) {
 
   const result = await streamText({
     model: bedrock("anthropic.claude-v2:1"),
-    system: "You are a helpful assistant.",
     messages,
   });
 
