@@ -37,7 +37,7 @@ export function PaymentDetails({ payments }: { payments: Payment[] }) {
             placeholder="Search payments..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8 max-w-sm"
+            className="pl-8 w-full"
           />
         </div>
         <Table>
