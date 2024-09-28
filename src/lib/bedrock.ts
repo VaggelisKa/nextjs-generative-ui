@@ -1,5 +1,6 @@
-import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
 import "server-only";
+
+import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
 
 export const bedrock = createAmazonBedrock({
   region: "eu-central-1",
