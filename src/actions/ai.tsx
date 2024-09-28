@@ -33,8 +33,8 @@ export type UIState = ClientMessage[];
 
 let bedrock = createAmazonBedrock({
   region: "eu-central-1",
-  accessKeyId: "AKIAV2TFLH22PJILH7OS",
-  secretAccessKey: "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",
+  accessKeyId: "AKIAV2TFLH22HRXD2BIL",
+  secretAccessKey: "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",
 });
 
 async function submitUserMessage(message: string): Promise<ClientMessage> {
