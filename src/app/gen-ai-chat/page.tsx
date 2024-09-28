@@ -2,8 +2,7 @@
 
 import { generateId } from "ai";
 import { useChat } from "ai/react";
-
-import { FormEvent } from "react";
+import { type FormEvent } from "react";
 import { Chat, MessageBox } from "~/components/Chat";
 
 export default function GenAiChatPage() {

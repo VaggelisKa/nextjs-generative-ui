@@ -18,15 +18,18 @@ import {
 
 // Define the AI state and UI state types
 export type ServerMessage = {
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   content: string;
 };
 
 export type ClientMessage = {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   display: ReactNode;
 };
+
+export type AIState = ServerMessage[];
+export type UIState = ClientMessage[];
 
 let bedrock = createAmazonBedrock({
   region: "eu-central-1",
@@ -198,16 +201,13 @@ async function submitUserMessage(message: string): Promise<ClientMessage> {
   };
 }
 
-export type AIState = ServerMessage[];
-export type UIState = ClientMessage[];
-
 // Create the AI provider with the initial states and allowed actions
 export const AI = createAI<AIState, UIState>({
   initialAIState: [],
   initialUIState: [
     {
       id: generateId(),
-      role: "assistant",
+      role: "system",
       display: "Hello, how can I help you?",
     },
   ],
