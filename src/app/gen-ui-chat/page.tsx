@@ -2,6 +2,7 @@
 
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
+import { FormEvent } from "react";
 import { AI, ClientMessage } from "~/actions/ai";
 import { Chat, MessageBox } from "~/components/Chat";
 
@@ -9,10 +10,10 @@ export default function GenUIChatPage() {
   let [messages, setMessages] = useUIState<typeof AI>();
   let { submitUserMessage } = useActions();
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
 
-    let userMessage = e?.target.message.value;
+    let userMessage = (e?.target as any).message.value;
 
     setMessages((messages: ClientMessage[]) => [
       ...messages,
