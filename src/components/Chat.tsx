@@ -29,6 +29,17 @@ export function Chat({
     }
   }, [children]);
 
+  const submitFormAndClearInput = (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    formRef.current?.requestSubmit();
+
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen w-full bg-white">
       <ScrollArea
@@ -51,14 +62,7 @@ export function Chat({
             onChange={(e) => onUserInputChange?.(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                formRef.current?.requestSubmit();
-
-                if (inputRef.current) {
-                  inputRef.current.value = "";
-                }
+                submitFormAndClearInput(e);
               }
             }}
             autoFocus
@@ -67,16 +71,7 @@ export function Chat({
             type="submit"
             size="icon"
             className="absolute w-8 h-8 top-3 right-3"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-
-              formRef.current?.requestSubmit();
-
-              if (inputRef.current) {
-                inputRef.current.value = "";
-              }
-            }}
+            onClick={submitFormAndClearInput}
           >
             <ArrowUpIcon className="w-4 h-4" />
             <span className="sr-only">Send</span>
