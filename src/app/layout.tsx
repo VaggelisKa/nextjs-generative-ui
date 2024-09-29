@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import { cn } from "~/lib/utils";
 import { AI } from "~/actions/ai";
+import { cn } from "~/lib/utils";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +23,7 @@ export default function RootLayout({
         <body
           className={cn(
             inter.className,
-            "md:flex md:justify-center md:items-center"
+            "md:flex md:justify-center md:items-center md:mx-auto md:max-w-screen-md",
           )}
         >
           {children}

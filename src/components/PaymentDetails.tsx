@@ -1,5 +1,9 @@
 "use client";
 
+import { Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
 import {
   Table,
   TableBody,
@@ -8,65 +12,18 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Search } from "lucide-react";
-import { useState, useMemo } from "react";
+import { Payment } from "~/mock-data";
 
-// Sample data for the payments
-const payments = [
-  {
-    id: 1,
-    date: "2023-07-01",
-    from: "Checking Account",
-    to: "Savings Account",
-    type: "Transfer",
-    amount: 500.0,
-  },
-  {
-    id: 2,
-    date: "2023-07-02",
-    from: "Payroll",
-    to: "Checking Account",
-    type: "Deposit",
-    amount: 2500.0,
-  },
-  {
-    id: 3,
-    date: "2023-07-03",
-    from: "Checking Account",
-    to: "Rent",
-    type: "Withdraw",
-    amount: 1200.0,
-  },
-  {
-    id: 4,
-    date: "2023-07-04",
-    from: "Savings Account",
-    to: "Investment Account",
-    type: "Transfer",
-    amount: 1000.0,
-  },
-  {
-    id: 5,
-    date: "2023-07-05",
-    from: "Checking Account",
-    to: "Credit Card Payment",
-    type: "Withdraw",
-    amount: 300.0,
-  },
-];
-
-export function PaymentDetails() {
+export function PaymentDetails({ payments }: { payments: Payment[] }) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredPayments = useMemo(() => {
     return payments.filter((payment) =>
       Object.values(payment).some((value) =>
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      )
+        value.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
     );
-  }, [searchTerm]);
+  }, [searchTerm, payments]);
 
   return (
     <Card className="w-full max-w-4xl">
@@ -80,7 +37,7 @@ export function PaymentDetails() {
             placeholder="Search payments..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8 max-w-sm"
+            className="pl-8 w-full"
           />
         </div>
         <Table>
@@ -96,12 +53,12 @@ export function PaymentDetails() {
           <TableBody>
             {filteredPayments.map((payment) => (
               <TableRow key={payment.id}>
-                <TableCell>{payment.date}</TableCell>
-                <TableCell>{payment.from}</TableCell>
-                <TableCell>{payment.to}</TableCell>
-                <TableCell>{payment.type}</TableCell>
+                <TableCell>{payment.timestamp}</TableCell>
+                <TableCell>{payment.fromAccount}</TableCell>
+                <TableCell>{payment.toAccount}</TableCell>
+                <TableCell>{payment.transferType}</TableCell>
                 <TableCell className="text-right">
-                  ${payment.amount.toFixed(2)}
+                  ${payment.value.toFixed(2)}
                 </TableCell>
               </TableRow>
             ))}
