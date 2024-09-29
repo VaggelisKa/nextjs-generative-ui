@@ -67,11 +67,9 @@ export function Chat({
             type="submit"
             size="icon"
             className="absolute w-8 h-8 top-3 right-3"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                if (inputRef.current) {
-                  inputRef.current.value = "";
-                }
+            onClick={() => {
+              if (inputRef.current) {
+                inputRef.current.value = "";
               }
             }}
           >
