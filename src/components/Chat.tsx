@@ -67,7 +67,12 @@ export function Chat({
             type="submit"
             size="icon"
             className="absolute w-8 h-8 top-3 right-3"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+
+              formRef.current?.requestSubmit();
+
               if (inputRef.current) {
                 inputRef.current.value = "";
               }
