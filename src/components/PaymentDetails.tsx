@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { Payment } from "~/mock-data";
+import { Payment } from "~/lib/mock-data";
 
 export function PaymentDetails({ payments }: { payments: Payment[] }) {
   const [searchTerm, setSearchTerm] = useState("");

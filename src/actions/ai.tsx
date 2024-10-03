@@ -14,7 +14,7 @@ import {
   getAccountsSummary,
   getPaymentTransactions,
   getPriceHistory,
-} from "~/mock-data";
+} from "~/lib/mock-data";
 
 // Define the AI state and UI state types
 export type ServerMessage = {
